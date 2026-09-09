@@ -1,7 +1,13 @@
+import os
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
-DATABASE_URL = "sqlite:///./sitelink.db"
+
+DATABASE_URL = os.getenv(
+    "SITELINK_DATABASE_URL",
+    "sqlite:///./sitelink.db",
+)
 
 engine = create_engine(
     DATABASE_URL,
