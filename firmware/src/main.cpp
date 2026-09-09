@@ -1,52 +1,59 @@
 #include <Arduino.h>
-#include <WiFi.h>
+
+#include "measurement.h"
+#include "wifi_scanner.h"
 
 static constexpr char DEVICE_ID[] = "SCOUT-01";
 static constexpr char ZONE_ID[] = "ZONE-B03";
 
-void printNetworkInfo(
-    const String& ssid,
-    int32_t rssi,
-    int32_t channel,
-    const String& bssid
-) {
+static constexpr char TARGET_SSID[] = "SiteLink_AP_01";
+
+// Empty string = accept any BSSID with TARGET_SSID.
+// Later this can be set to a specific AP MAC address.
+static constexpr char TARGET_BSSID[] = "";
+
+static constexpr uint32_t SCAN_INTERVAL_MS = 5000;
+
+void printMeasurement(const WiFiMeasurement& measurement) {
+    Serial.println();
     Serial.println("--------------------------------");
+
     Serial.printf("Device  : %s\n", DEVICE_ID);
     Serial.printf("Zone    : %s\n", ZONE_ID);
-    Serial.printf("SSID    : %s\n", ssid.c_str());
-    Serial.printf("BSSID   : %s\n", bssid.c_str());
-    Serial.printf("RSSI    : %ld dBm\n", static_cast<long>(rssi));
-    Serial.printf("Channel : %ld\n", static_cast<long>(channel));
-}
 
-void scanNetworks() {
-    Serial.println();
-    Serial.println("[SiteLink Scout] Starting Wi-Fi scan...");
-
-    WiFi.mode(WIFI_STA);
-    WiFi.disconnect(true);
-    delay(100);
-
-    const int networkCount = WiFi.scanNetworks();
-
-    if (networkCount <= 0) {
-        Serial.println("[Scout] No Wi-Fi networks found.");
-        WiFi.scanDelete();
+    if (!measurement.found) {
+        Serial.printf("SSID    : %s\n", TARGET_SSID);
+        Serial.println("Status  : NOT FOUND");
         return;
     }
 
-    Serial.printf("[Scout] %d networks found\n", networkCount);
+    const SignalStatus status =
+        classifySignal(measurement.rssi);
 
-    for (int i = 0; i < networkCount; ++i) {
-        printNetworkInfo(
-            WiFi.SSID(i),
-            WiFi.RSSI(i),
-            WiFi.channel(i),
-            WiFi.BSSIDstr(i)
-        );
-    }
+    Serial.printf(
+        "SSID    : %s\n",
+        measurement.ssid.c_str()
+    );
 
-    WiFi.scanDelete();
+    Serial.printf(
+        "BSSID   : %s\n",
+        measurement.bssid.c_str()
+    );
+
+    Serial.printf(
+        "RSSI    : %ld dBm\n",
+        static_cast<long>(measurement.rssi)
+    );
+
+    Serial.printf(
+        "Channel : %ld\n",
+        static_cast<long>(measurement.channel)
+    );
+
+    Serial.printf(
+        "Status  : %s\n",
+        signalStatusToString(status)
+    );
 }
 
 void setup() {
@@ -56,13 +63,22 @@ void setup() {
     Serial.println();
     Serial.println("================================");
     Serial.println(" SiteLink Scout v0.1.0");
-    Serial.println(" Wi-Fi Coverage Validation Node");
+    Serial.println(" Target AP Measurement Node");
     Serial.println("================================");
 
-    scanNetworks();
+    Serial.printf("Device ID   : %s\n", DEVICE_ID);
+    Serial.printf("Zone ID     : %s\n", ZONE_ID);
+    Serial.printf("Target SSID : %s\n", TARGET_SSID);
 }
 
 void loop() {
-    delay(10000);
-    scanNetworks();
+    const WiFiMeasurement measurement =
+        scanTargetNetwork(
+            TARGET_SSID,
+            TARGET_BSSID
+        );
+
+    printMeasurement(measurement);
+
+    delay(SCAN_INTERVAL_MS);
 }
