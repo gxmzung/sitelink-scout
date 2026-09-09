@@ -11,3 +11,9 @@ firmware/.pio/
 
 # TypeScript build cache
 frontend/*.tsbuildinfo
+
+# PlatformIO build artifacts
+firmware/.pio/
+
+# TypeScript build cache
+frontend/*.tsbuildinfo

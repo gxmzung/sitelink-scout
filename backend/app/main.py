@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
+from app.routers.coverage import router as coverage_router
+from app.routers.devices import router as devices_router
 from app.routers.measurements import router as measurements_router
 
 Base.metadata.create_all(bind=engine)
@@ -24,6 +26,8 @@ app.add_middleware(
 )
 
 app.include_router(measurements_router)
+app.include_router(devices_router)
+app.include_router(coverage_router)
 
 
 @app.get("/")
