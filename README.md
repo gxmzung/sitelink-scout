@@ -143,3 +143,13 @@ Target demonstration: **17th LH Land Technology Competition**
 ## License
 
 License selection pending.
+
+## Documentation
+
+Detailed project specification:
+
+- [Project Specification](docs/project-spec.md)
+- [Architecture](docs/architecture.md)
+- [Development Plan](docs/development-plan.md)
+- [Hardware BOM](hardware/BOM.md)
+
