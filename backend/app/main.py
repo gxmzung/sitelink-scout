@@ -34,7 +34,7 @@ app.include_router(coverage_router)
 def root():
     return {
         "service": "SiteLink Scout API",
-        "version": "0.1.0",
+        
     }
 
 
@@ -43,5 +43,5 @@ def health():
     return {
         "status": "ok",
         "service": "sitelink-scout-api",
-        "version": "0.1.0",
+        
     }
