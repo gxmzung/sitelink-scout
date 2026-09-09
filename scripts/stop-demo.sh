@@ -55,7 +55,7 @@ echo
 echo "Cleaning leftover processes on demo ports..."
 
 for port in 8000 5173; do
-  PIDS=$(lsof -ti tcp:"$port" 2>/dev/null || true)
+  PIDS=$(lsof -tiTCP:"$port" -sTCP:LISTEN 2>/dev/null || true)
 
   if [ -z "$PIDS" ]; then
     echo "Port $port: free"
@@ -78,7 +78,7 @@ echo "Final port check..."
 FAILED=0
 
 for port in 8000 5173; do
-  if lsof -ti tcp:"$port" >/dev/null 2>&1; then
+  if lsof -tiTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; then
     echo "ERROR: port $port is still occupied:"
     lsof -i :"$port" || true
     FAILED=1

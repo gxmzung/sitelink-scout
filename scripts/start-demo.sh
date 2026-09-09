@@ -21,13 +21,13 @@ echo "========================================"
 echo
 echo "[1/5] Checking ports..."
 
-if lsof -ti tcp:8000 >/dev/null 2>&1; then
+if lsof -tiTCP:8000 -sTCP:LISTEN >/dev/null 2>&1; then
   echo "ERROR: port 8000 is already in use."
   echo "Run: ./scripts/stop-demo.sh"
   exit 1
 fi
 
-if lsof -ti tcp:5173 >/dev/null 2>&1; then
+if lsof -tiTCP:5173 -sTCP:LISTEN >/dev/null 2>&1; then
   echo "ERROR: port 5173 is already in use."
   echo "Run: ./scripts/stop-demo.sh"
   exit 1

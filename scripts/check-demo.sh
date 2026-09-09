@@ -12,8 +12,8 @@ FAILED=0
 
 echo
 echo "[Backend process]"
-if lsof -i :8000 >/dev/null 2>&1; then
-  lsof -i :8000
+if lsof -nP -iTCP:8000 -sTCP:LISTEN >/dev/null 2>&1; then
+  lsof -nP -iTCP:8000 -sTCP:LISTEN
 else
   echo "OFFLINE"
   FAILED=1
@@ -48,8 +48,8 @@ fi
 
 echo
 echo "[Frontend process]"
-if lsof -i :5173 >/dev/null 2>&1; then
-  lsof -i :5173
+if lsof -nP -iTCP:5173 -sTCP:LISTEN >/dev/null 2>&1; then
+  lsof -nP -iTCP:5173 -sTCP:LISTEN
 else
   echo "OFFLINE"
   FAILED=1
