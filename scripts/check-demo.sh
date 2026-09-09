@@ -21,8 +21,8 @@ fi
 
 echo
 echo "[Backend health]"
-if curl -fsS "$BACKEND_URL/api/v1/health" | python3 -m json.tool; then
-  :
+if RESPONSE=$(curl -fsS "$BACKEND_URL/api/v1/health" 2>/dev/null); then
+  echo "$RESPONSE" | python3 -m json.tool
 else
   echo "FAILED"
   FAILED=1
@@ -30,8 +30,8 @@ fi
 
 echo
 echo "[Coverage]"
-if curl -fsS "$BACKEND_URL/api/v1/coverage" | python3 -m json.tool; then
-  :
+if RESPONSE=$(curl -fsS "$BACKEND_URL/api/v1/coverage" 2>/dev/null); then
+  echo "$RESPONSE" | python3 -m json.tool
 else
   echo "FAILED"
   FAILED=1
@@ -39,8 +39,8 @@ fi
 
 echo
 echo "[Devices]"
-if curl -fsS "$BACKEND_URL/api/v1/devices" | python3 -m json.tool; then
-  :
+if RESPONSE=$(curl -fsS "$BACKEND_URL/api/v1/devices" 2>/dev/null); then
+  echo "$RESPONSE" | python3 -m json.tool
 else
   echo "FAILED"
   FAILED=1
