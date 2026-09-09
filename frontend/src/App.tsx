@@ -6,7 +6,7 @@ import {
   getHealth,
 } from './api/scout'
 
-import CoverageHeatmap from './components/CoverageHeatmap'
+import LatestZoneSamples from './components/LatestZoneSamples'
 import ScoutCard from './components/ScoutCard'
 
 import type {
@@ -137,14 +137,14 @@ function App() {
         </article>
 
         <article className="metric-card">
-          <p>Scouts Online</p>
+          <p>Scouts Seen</p>
           <strong>{devices.length}</strong>
         </article>
 
         <article className="metric-card">
-          <p>Dead Zones</p>
+          <p>Uncovered Zones</p>
           <strong>
-            {coverage?.dead_zones ?? '--'}
+            {coverage?.uncovered_zones ?? '--'}
           </strong>
         </article>
       </section>
@@ -156,7 +156,7 @@ function App() {
               <p className="eyebrow">
                 LIVE COVERAGE
               </p>
-              <h2>Zone Map</h2>
+              <h2>Latest Zone Samples</h2>
             </div>
 
             <span className="threshold">
@@ -167,7 +167,7 @@ function App() {
             </span>
           </div>
 
-          <CoverageHeatmap
+          <LatestZoneSamples
             zones={coverage?.zones ?? []}
           />
         </article>
@@ -210,8 +210,8 @@ function App() {
 
         <p>
           {coverage &&
-          coverage.dead_zones > 0
-            ? `${coverage.dead_zones} uncovered zone detected. Review AP placement near the weakest measured zone.`
+          coverage.uncovered_zones > 0
+            ? `${coverage.uncovered_zones} uncovered zone detected. Review AP placement near the weakest measured zone.`
             : 'No uncovered zones detected in the latest measurements.'}
         </p>
       </section>

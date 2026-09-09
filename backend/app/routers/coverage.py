@@ -51,6 +51,7 @@ def get_coverage(
     )
 
     return {
+        "metric": "latest_zone_sample_coverage",
         **summary,
         "usable_threshold_dbm": -75,
         "zones": latest_zones,

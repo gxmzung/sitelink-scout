@@ -5,7 +5,7 @@ interface Props {
   zones: CoverageZone[]
 }
 
-export default function CoverageHeatmap({ zones }: Props) {
+export default function LatestZoneSamples({ zones }: Props) {
   if (zones.length === 0) {
     return (
       <div className="empty">

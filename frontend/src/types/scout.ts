@@ -27,6 +27,7 @@ export interface CoverageZone {
 export interface CoverageSummary {
   total_zones: number
   covered_zones: number
+  uncovered_zones: number
   dead_zones: number
   coverage_percent: number
   average_rssi: number | null
