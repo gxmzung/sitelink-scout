@@ -1,5 +1,37 @@
 # SiteLink Scout
 
+## Team
+
+### 이영준
+**배재대학교 컴퓨터공학과 26학번**  
+**Role — Software & System Integration**
+
+- SiteLink Scout 전체 시스템 구조 설계
+- ESP32 Scout 펌웨어 개발
+- Wi-Fi RSSI / BSSID / Channel 측정 로직 구현
+- FastAPI 백엔드 및 측정 API 구성
+- SQLite 기반 측정 데이터 저장 구조 설계
+- React Field Console 연동 및 시스템 통합
+- SiteLink RF 예측 결과와 Scout 실측값의 검증 구조 설계
+- Boardless simulator 및 E2E 데모 환경 구축
+- GitHub 저장소 및 개발 워크플로 관리
+- LH 국토기술대전 기술 구현 및 실증 구조 정리
+
+### 박하음
+**배재대학교 건축학과 26학번**  
+**Role — Architectural & Spatial Analysis**
+
+- 건설 공정 변화에 따른 공간 조건 분석
+- 벽체, 구조물, 임시 시설 등 건축 요소 변화 검토
+- CAD / BIM 기반 공간정보 활용 방향 정리
+- AP 배치 후보 위치의 건축·공간적 타당성 검토
+- 주요 작업구역 및 우선 통신구역 설정 지원
+- 건설현장 시나리오 및 장애물 조건 설계
+- SiteLink 결과의 건축적 해석 및 시각화 방향 검토
+- LH 국토기술대전 발표자료의 공간·건축 관점 구성
+
+---
+
 > **제17회 LH 국토기술대전 출품 프로젝트**  
 > **SiteLink — 공정 변화에 맞춘 건설현장 Wi-Fi 배치 기술**  
 > Hardware-Assisted Field Validation System
