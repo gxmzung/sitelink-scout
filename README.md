@@ -25,9 +25,6 @@ Dead Zone Detection
         ↓
 AP Relocation Recommendation
 MVP Goals
-
-The first prototype focuses on a simple end-to-end validation pipeline.
-
 Wi-Fi RSSI scanning using ESP32
 Target SSID / BSSID measurement
 Multi-Scout telemetry
@@ -39,40 +36,11 @@ RSSI history visualization
 Dead-zone detection
 Basic AP relocation recommendation
 System Architecture
-┌──────────────────────┐
-│   SiteLink Scout     │
-│      ESP32           │
-│                      │
-│ Wi-Fi Scanner        │
-│ RSSI Measurement     │
-│ OLED Display         │
-│ Status LED           │
-└──────────┬───────────┘
-           │
-           │ HTTP / JSON
-           ▼
-┌──────────────────────┐
-│   FastAPI Backend    │
-│                      │
-│ Measurement API      │
-│ Device Management    │
-│ Signal Analysis      │
-│ Coverage Calculation │
-│ SQLite               │
-└──────────┬───────────┘
-           │
-           │ REST API
-           ▼
-┌──────────────────────┐
-│ SiteLink Field       │
-│ Console              │
-│                      │
-│ React + TypeScript   │
-│ Scout Status         │
-│ Coverage Heatmap     │
-│ RSSI History         │
-│ Recommendations      │
-└──────────────────────┘
+ESP32 Scout
+     ↓ HTTP / JSON
+FastAPI Backend
+     ↓ REST API
+SiteLink Field Console
 Tech Stack
 Firmware
 ESP32 DevKit V1
@@ -101,9 +69,6 @@ Infrastructure
 Docker Compose
 GitHub Actions
 Measurement Model
-
-Example Scout telemetry:
-
 {
   "device_id": "SCOUT-01",
   "zone_id": "ZONE-B03",
@@ -112,26 +77,16 @@ Example Scout telemetry:
   "rssi": -64,
   "channel": 6
 }
-
-Server reception time is used as the authoritative timestamp for the MVP.
-
 RSSI Classification
 RSSI	Status
 >= -55 dBm	EXCELLENT
--56 ~ -65 dBm	GOOD
--66 ~ -75 dBm	FAIR
--76 ~ -85 dBm	POOR
+-56 to -65 dBm	GOOD
+-66 to -75 dBm	FAIR
+-76 to -85 dBm	POOR
 <= -86 dBm	DEAD
 
-These thresholds are prototype-level indicators and are not intended to represent universal construction-site communication requirements.
+These thresholds are prototype-level indicators, not universal construction-site RF requirements.
 
-Future versions may additionally measure:
-
-Packet loss
-Latency
-Jitter
-Throughput
-Channel utilization
 Repository Structure
 sitelink-scout/
 ├── firmware/
@@ -141,9 +96,6 @@ sitelink-scout/
 ├── docs/
 └── .github/workflows/
 Prototype Target
-
-The first prototype aims to demonstrate:
-
 ESP32
   ↓
 Real RSSI Measurement
@@ -159,9 +111,7 @@ Project Status
 
 Prototype / MVP Development
 
-Target demonstration:
-
-17th LH Land Technology Competition
+Target demonstration: 17th LH Land Technology Competition
 
 License
 
