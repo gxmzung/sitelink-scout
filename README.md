@@ -378,3 +378,64 @@ Quantified Signal Difference
         ↓
 AP Placement Decision Support
 
+---
+
+## Competition
+
+SiteLink Scout is being developed as the field-validation subsystem for **SiteLink**, a project for the **제17회 LH 국토기술대전**.
+
+### Competition Project
+
+**SiteLink — 공정 변화에 맞춘 건설현장 Wi-Fi 배치 기술**
+
+Construction sites continuously change as walls, structures, equipment, materials, and work zones are added or relocated.
+
+SiteLink reflects these construction-phase changes to estimate RF conditions and recommend Wi-Fi AP placement adjustments.
+
+SiteLink Scout extends the concept from simulation-based optimization to field measurement and validation.
+
+### System Roles
+
+**SiteLink**
+
+- construction-phase / CAD / BIM based environment modeling
+- RF propagation estimation
+- weak-zone prediction
+- priority-zone evaluation
+- AP placement optimization
+
+**SiteLink Scout**
+
+- field Wi-Fi measurement
+- RSSI / BSSID / channel collection
+- measurement API and storage
+- latest sampled-zone status visualization
+- predicted vs measured RSSI validation
+- future RF model calibration
+
+### Proposal-Stage Simulation
+
+The SiteLink proposal-stage simulation evaluated **454 candidate AP positions**.
+
+| Metric | Before | After |
+|---|---:|---:|
+| Overall predicted coverage | 45.2% | 45.5% |
+| Priority-zone predicted coverage | 76.0% | 79.1% |
+
+Optimization result:
+
+- 0 additional APs
+- 1 AP relocation
+- approximately 6.3 m relocation distance
+- priority-zone predicted coverage improvement: **+3.1%p**
+
+> The **+3.1%p priority-zone improvement is a SiteLink simulation result**, not a field-measured result.
+
+### Competition Message
+
+**SiteLink determines where an AP should be placed.**
+
+**SiteLink Scout verifies whether that decision works in the field.**
+
+The project demonstrates a construction-site communication decision-support loop rather than a standalone Wi-Fi signal meter.
+
