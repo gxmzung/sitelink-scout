@@ -1,109 +1,218 @@
 import { useEffect, useState } from 'react'
 
-type Health = {
-  status: string
-  service: string
-  version: string
-}
+import {
+  getCoverage,
+  getDevices,
+  getHealth,
+} from './api/scout'
+
+import CoverageHeatmap from './components/CoverageHeatmap'
+import ScoutCard from './components/ScoutCard'
+
+import type {
+  CoverageSummary,
+  ScoutDevice,
+} from './types/scout'
+
+const POLL_INTERVAL_MS = 2000
 
 function App() {
-  const [health, setHealth] = useState<Health | null>(null)
+  const [backendOnline, setBackendOnline] =
+    useState(false)
+
+  const [devices, setDevices] =
+    useState<ScoutDevice[]>([])
+
+  const [coverage, setCoverage] =
+    useState<CoverageSummary | null>(null)
+
+  const [error, setError] =
+    useState<string | null>(null)
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/v1/health')
-      .then((res) => res.json())
-      .then(setHealth)
-      .catch(() => setHealth(null))
+    let mounted = true
+
+    async function load() {
+      try {
+        const [
+          health,
+          devicesData,
+          coverageData,
+        ] = await Promise.all([
+          getHealth(),
+          getDevices(),
+          getCoverage(),
+        ])
+
+        if (!mounted) {
+          return
+        }
+
+        setBackendOnline(health.status === 'ok')
+        setDevices(devicesData)
+        setCoverage(coverageData)
+        setError(null)
+      } catch (err) {
+        if (!mounted) {
+          return
+        }
+
+        setBackendOnline(false)
+
+        setError(
+          err instanceof Error
+            ? err.message
+            : 'Unknown API error'
+        )
+      }
+    }
+
+    load()
+
+    const timer = window.setInterval(
+      load,
+      POLL_INTERVAL_MS
+    )
+
+    return () => {
+      mounted = false
+      window.clearInterval(timer)
+    }
   }, [])
 
   return (
-    <main className="app">
+    <main className="app-shell">
       <header className="header">
         <div>
-          <p className="eyebrow">SiteLink</p>
+          <p className="eyebrow">
+            SITELINK SCOUT
+          </p>
+
           <h1>Field Console</h1>
+
           <p className="subtitle">
-            Construction-site wireless coverage validation
+            Construction-site Wi-Fi coverage
+            validation
           </p>
         </div>
 
-        <div className={`backend-status ${health ? 'online' : 'offline'}`}>
-          <span className="dot" />
-          {health ? 'BACKEND ONLINE' : 'BACKEND OFFLINE'}
+        <div
+          className={
+            backendOnline
+              ? 'backend-status online'
+              : 'backend-status offline'
+          }
+        >
+          <span />
+          BACKEND{' '}
+          {backendOnline
+            ? 'ONLINE'
+            : 'OFFLINE'}
         </div>
       </header>
 
+      {error && (
+        <div className="error-banner">
+          {error}
+        </div>
+      )}
+
       <section className="stats">
-        <article className="card">
-          <span>Coverage</span>
-          <strong>-- %</strong>
-          <small>Waiting for Scout telemetry</small>
+        <article className="metric-card">
+          <p>Coverage</p>
+          <strong>
+            {coverage
+              ? `${coverage.coverage_percent}%`
+              : '--'}
+          </strong>
         </article>
 
-        <article className="card">
-          <span>Average RSSI</span>
-          <strong>-- dBm</strong>
-          <small>No measurements yet</small>
+        <article className="metric-card">
+          <p>Average RSSI</p>
+          <strong>
+            {coverage?.average_rssi != null
+              ? `${coverage.average_rssi} dBm`
+              : '--'}
+          </strong>
         </article>
 
-        <article className="card">
-          <span>Active Scouts</span>
-          <strong>0 / 3</strong>
-          <small>Prototype target</small>
+        <article className="metric-card">
+          <p>Scouts Online</p>
+          <strong>{devices.length}</strong>
         </article>
 
-        <article className="card">
-          <span>Dead Zones</span>
-          <strong>0</strong>
-          <small>RSSI threshold-based</small>
+        <article className="metric-card">
+          <p>Dead Zones</p>
+          <strong>
+            {coverage?.dead_zones ?? '--'}
+          </strong>
         </article>
       </section>
 
       <section className="workspace">
-        <article className="panel coverage">
-          <div className="panel-title">
+        <article className="panel">
+          <div className="panel-heading">
             <div>
-              <p className="eyebrow">LIVE SITE</p>
-              <h2>Coverage Map</h2>
+              <p className="eyebrow">
+                LIVE COVERAGE
+              </p>
+              <h2>Zone Map</h2>
             </div>
-            <span>ZONE GRID</span>
+
+            <span className="threshold">
+              Usable ≥{' '}
+              {coverage?.usable_threshold_dbm ??
+                -75}{' '}
+              dBm
+            </span>
           </div>
 
-          <div className="grid-placeholder">
-            <div>A01</div>
-            <div>A02</div>
-            <div>A03</div>
-            <div>B01</div>
-            <div>B02</div>
-            <div>B03</div>
-            <div>C01</div>
-            <div>C02</div>
-            <div>C03</div>
-          </div>
+          <CoverageHeatmap
+            zones={coverage?.zones ?? []}
+          />
         </article>
 
-        <article className="panel scouts">
-          <div className="panel-title">
+        <article className="panel">
+          <div className="panel-heading">
             <div>
-              <p className="eyebrow">DEVICES</p>
+              <p className="eyebrow">
+                FIELD NODES
+              </p>
               <h2>Scout Status</h2>
             </div>
           </div>
 
-          <div className="empty">
-            No Scout measurements received yet.
+          <div className="scout-list">
+            {devices.length > 0 ? (
+              devices.map((device) => (
+                <ScoutCard
+                  key={device.device_id}
+                  scout={device}
+                />
+              ))
+            ) : (
+              <div className="empty">
+                No Scout measurements received
+                yet.
+              </div>
+            )}
           </div>
         </article>
       </section>
 
       <section className="panel recommendation">
         <div>
-          <p className="eyebrow">RECOMMENDATION ENGINE</p>
+          <p className="eyebrow">
+            RECOMMENDATION ENGINE
+          </p>
           <h2>AP Relocation</h2>
         </div>
+
         <p>
-          Coverage recommendations will appear after measurement data is
-          collected.
+          {coverage &&
+          coverage.dead_zones > 0
+            ? `${coverage.dead_zones} uncovered zone detected. Review AP placement near the weakest measured zone.`
+            : 'No uncovered zones detected in the latest measurements.'}
         </p>
       </section>
     </main>

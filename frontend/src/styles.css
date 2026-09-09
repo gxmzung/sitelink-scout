@@ -175,3 +175,174 @@ h2 {
     flex-direction: column;
   }
 }
+
+.error-banner {
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  border: 1px solid #6d3030;
+  border-radius: 12px;
+  background: #241414;
+  color: #ffb6b6;
+}
+
+.backend-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.backend-status span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.backend-status.online span {
+  background: #54e38e;
+}
+
+.backend-status.offline span {
+  background: #ff6767;
+}
+
+.panel-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.threshold {
+  font-size: 12px;
+  color: #8c9bb0;
+}
+
+.scout-list {
+  display: grid;
+  gap: 14px;
+}
+
+.scout-card {
+  border: 1px solid #253247;
+  border-radius: 14px;
+  padding: 16px;
+  background: #111923;
+}
+
+.scout-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.scout-card h3 {
+  margin: 4px 0 0;
+}
+
+.scout-rssi {
+  margin: 18px 0;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.scout-rssi span {
+  margin-left: 5px;
+  font-size: 14px;
+  color: #8c9bb0;
+}
+
+.scout-meta {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.scout-meta div {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.scout-meta dt {
+  color: #8c9bb0;
+}
+
+.scout-meta dd {
+  margin: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.signal-badge {
+  display: inline-flex;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.signal-excellent,
+.signal-good {
+  background: rgba(84, 227, 142, 0.15);
+}
+
+.signal-fair {
+  background: rgba(245, 207, 93, 0.15);
+}
+
+.signal-poor,
+.signal-dead {
+  background: rgba(255, 103, 103, 0.15);
+}
+
+.heatmap {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.heatmap-cell {
+  min-height: 145px;
+  padding: 14px;
+  border: 1px solid #253247;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.heatmap-cell strong,
+.heatmap-cell span {
+  display: block;
+}
+
+.heatmap-cell span {
+  margin-top: 3px;
+  color: #8c9bb0;
+  font-size: 12px;
+}
+
+.heatmap-value {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.signal-bg-excellent,
+.signal-bg-good {
+  background: rgba(84, 227, 142, 0.06);
+}
+
+.signal-bg-fair {
+  background: rgba(245, 207, 93, 0.06);
+}
+
+.signal-bg-poor,
+.signal-bg-dead {
+  background: rgba(255, 103, 103, 0.06);
+}
