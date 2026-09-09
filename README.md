@@ -24,51 +24,66 @@ Measured vs Planned Coverage
 Dead Zone Detection
         ↓
 AP Relocation Recommendation
-MVP Goals
-Wi-Fi RSSI scanning using ESP32
-Target SSID / BSSID measurement
-Multi-Scout telemetry
-Zone-based measurement collection
-Signal quality classification
-Real-time Field Console
-Coverage heatmap
-RSSI history visualization
-Dead-zone detection
-Basic AP relocation recommendation
-System Architecture
+```
+
+## MVQ Goals
+
+- Wi-Fi RSSI scanning using ESP32
+- Target SSID / BSSID measurement
+- Multi-Scout telemetry
+- Zone-based measurement collection
+- Signal quality classification
+- Real-time Field Console
+- Coverage heatmap
+- RSSI history visualization
+- Dead-zone detection
+- Basic AP relocation recommendation
+
+## System Architecture
+
+```text
 ESP32 Scout
      ↓ HTTP / JSON
 FastAPI Backend
      ↓ REST API
 SiteLink Field Console
-Tech Stack
-Firmware
-ESP32 DevKit V1
-C++
-Arduino Framework
-PlatformIO
-ESP32 Wi-Fi API
-SSD1306 OLED
-RGB / WS2812 Status LED
-Backend
-Python 3.12
-FastAPI
-Pydantic v2
-SQLAlchemy 2.x
-SQLite
-Pytest
-OpenAPI
-Frontend
-React
-TypeScript
-Vite
-Tailwind CSS
-TanStack Query
-Recharts
-Infrastructure
-Docker Compose
-GitHub Actions
-Measurement Model
+```
+
+## Tech Stack
+
+### Firmware
+- ESP32 DevKit V1
+- C++
+- Arduino Framework
+- PlatformIO
+- ESP32 Wi-Fi API
+- SSD1306 OLED
+- RGB / WS2812 Status LED
+
+### Backend
+- Python 3.12
+- FastAPI
+- Pydantic v2
+- SQLAlchemy 2.x
+- SQLite
+- Pytest
+- OpenAPI
+
+### Frontend
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- TanStack Query
+- Recharts
+
+### Infrastructure
+- Docker Compose
+- GitHub Actions
+
+## Measurement Model
+
+```json
 {
   "device_id": "SCOUT-01",
   "zone_id": "ZONE-B03",
@@ -77,25 +92,35 @@ Measurement Model
   "rssi": -64,
   "channel": 6
 }
-RSSI Classification
-RSSI	Status
->= -55 dBm	EXCELLENT
--56 to -65 dBm	GOOD
--66 to -75 dBm	FAIR
--76 to -85 dBm	POOR
-<= -86 dBm	DEAD
+```
 
-These thresholds are prototype-level indicators, not universal construction-site RF requirements.
+## RSSI Classification
 
-Repository Structure
+| RSSI | Status |
+|---|---|
+| >= -55 dBm | EXCELLENT |
+| -56 to -65 dBm | GOOD |
+| -66 to -75 dBm | FAIR |
+| -76 to -85 dBm | POOR |
+| <= -86 dBm | DEAD |
+
+> These thresholds are prototype-level indicators, not universal construction-site RF requirements.
+
+## Repository Structure
+
+```text
 sitelink-scout/
-├── firmware/
-├── backend/
-├── frontend/
-├── hardware/
-├── docs/
-└── .github/workflows/
-Prototype Target
+├─ firmware/
+├─ backend/
+├─ frontend/
+├─ hardware/
+├─ docs/
+└─ .github/workflows/
+```
+
+## Prototype Target
+
+```text
 ESP32
   ↓
 Real RSSI Measurement
@@ -107,12 +132,14 @@ SQLite
 React Field Console
   ↓
 Coverage / Dead Zone Visualization
-Project Status
+```
 
-Prototype / MVP Development
+## Project Status
 
-Target demonstration: 17th LH Land Technology Competition
+**Prototype / MVP Development**
 
-License
+Target demonstration: **17th LH Land Technology Competition**
+
+## License
 
 License selection pending.
