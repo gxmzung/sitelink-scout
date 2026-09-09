@@ -1,6 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.database import Base, engine
+from app.routers.measurements import router as measurements_router
+
+Base.metadata.create_all(bind=engine)
+
 app = FastAPI(
     title="SiteLink Scout API",
     description="Field telemetry API for SiteLink Scout",
@@ -17,6 +22,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(measurements_router)
 
 
 @app.get("/")
