@@ -5,3 +5,9 @@ frontend/dist/
 backend/.venv/
 backend/*.db
 backend/*.sqlite3
+
+# PlatformIO build artifacts
+firmware/.pio/
+
+# TypeScript build cache
+frontend/*.tsbuildinfo
