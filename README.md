@@ -1,3 +1,32 @@
+﻿<!-- PORTFOLIO-HEADER:START -->
+
+# sitelink-scout
+
+> ESP32-based Wi-Fi field measurement and RF validation system for construction-site AP placement optimization.
+
+**Domain:** Construction Tech · RF / Wi-Fi · IoT · Field Validation  
+**Role:** Software & System Integration  
+**Status:** Prototype / LH Land Technology Competition
+
+## Portfolio Summary
+
+### System Focus
+
+- ESP32 Wi-Fi RSSI / BSSID / channel measurement
+- FastAPI measurement backend
+- SQLite measurement-data storage
+- React field console
+- RF prediction vs. field-measurement validation
+- boardless simulator and E2E demonstration
+
+### Engineering Boundary
+
+> The prototype supports measurement and validation of a placement concept. RF prediction and field measurements are treated as evidence inputs, not as a guarantee of production-site coverage.
+
+---
+
+<!-- PORTFOLIO-HEADER:END -->
+
 # SiteLink Scout
 
 ## Team
@@ -963,3 +992,4 @@ Validation
         ↓
 Calibration
 ```
+
