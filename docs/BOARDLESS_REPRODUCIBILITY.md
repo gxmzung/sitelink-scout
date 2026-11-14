@@ -18,7 +18,7 @@ cd backend
 python -m venv .venv
 # PowerShell: .venv\Scripts\Activate.ps1
 # bash: source .venv/bin/activate
-python -m pip install -r requirements.txt
+python -m pip install -r requirements-ci.txt
 python -m pytest -q
 ```
 
@@ -36,3 +36,6 @@ python -m pytest -q tests/test_api_contract_regression.py
 
 ## 해석
 `TestClient`는 서버 내부 호출 수준을 확인하며 실제 네트워크, 보드 펌웨어 및 무선 환경을 대체하지 않습니다. 제품 품질 향상을 위해 실측 자료의 수집 시점, SSID/BSSID 익명화, RSSI 단위, 예측값/관측값 구분을 추가로 검증해야 합니다.
+
+## 의존성 고정 단계
+`backend/requirements-ci.txt`에는 이전에 성공한 Ubuntu/Python 3.11 CI에서 관측한 직접 패키지 버전을 고정했습니다. 일반 개발용 `backend/requirements.txt`는 유연한 의존성 목록이며, CI에 쓰는 별도 목록과 다릅니다. 간접 패키지까지 고정하지는 않았으므로 완전한 lockfile이 아니며, 정확한 설치 집합은 GitHub Actions 아티팩트의 `dependencies.txt`에서 확인해야 합니다.
