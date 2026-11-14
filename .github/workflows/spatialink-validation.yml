@@ -59,7 +59,8 @@ jobs:
               "design-direction.md", "roadmap.md", "project-origins.md"
           ]
           assert "# SPATIALINK" in readme
-          assert "simulation" in readme.lower()
+          assert Path("docs/spatialink-workspace-concept.svg").is_file()
+          assert any(term in readme.lower() for term in ("simulation", "시뮬레이션", "가상 데이터"))
           for name in expected:
               assert Path("docs", name).is_file(), name
               assert f"docs/{name}" in readme, name
