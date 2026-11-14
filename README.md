@@ -72,9 +72,15 @@ ESP32 firmware setup, build, upload and monitoring are described in [System Arch
 | [Spatial Analysis](docs/spatial-analysis.md) | Architectural variables, material/occupancy scenarios and modeling assumptions |
 | [System Architecture](docs/architecture.md) | Firmware, backend, frontend, API and execution |
 | [Validation Plan](docs/validation-plan.md) | Software versus physical validation, measurement protocol and metrics |
-| [Design Direction](docs/design-direction.md) | Architecture-led UX, spatial layers and design deliverables |
+| [Design Direction](docs/design-direction.md) | Architecture-led UX, 4-screen handoff, pending design review |
 | [Roadmap](docs/roadmap.md) | Staged development and evidence gates |
 | [Project Origins](docs/project-origins.md) | LH competition, simulation figures, original team roles and historical scope |
+
+## Architectural workspace concept (unapproved)
+
+![SPATIALINK conceptual architectural workspace](docs/spatialink-workspace-concept.svg)
+
+**Concept only.** The floor plan, room dimensions, point locations and RSSI labels in this image are synthetic UI placeholders. This is an AI-prepared draft for 박하음's review, **not** an authored or approved deliverable by 박하음 and **not** a currently implemented spatial UI. See [the design handoff](docs/design-direction.md).
 
 ## Principles
 
