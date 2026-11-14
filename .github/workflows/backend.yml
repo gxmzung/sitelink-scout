@@ -20,8 +20,8 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
           cache: pip
@@ -35,13 +35,14 @@ jobs:
           mkdir -p evidence
           printf 'repository=%s\ncheckout_sha=%s\nevent_sha=%s\npr_head_sha=%s\nrun_id=%s\nrunner=%s\n' "$GITHUB_REPOSITORY" "$(git rev-parse HEAD)" "$GITHUB_SHA" "${{ github.event.pull_request.head.sha || github.sha }}" "$GITHUB_RUN_ID" "$RUNNER_OS" > evidence/metadata.txt
           python --version >> evidence/metadata.txt 2>&1
+          python -m pip freeze > evidence/dependencies.txt
       - name: Run API contract tests
         run: |
           set -o pipefail
           python -m pytest -q --junitxml=evidence/pytest.xml 2>&1 | tee evidence/pytest.log
       - name: Upload boardless API evidence (not RF field proof)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: sitelink-boardless-${{ github.run_id }}
           path: backend/evidence/
