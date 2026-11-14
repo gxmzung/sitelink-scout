@@ -10,28 +10,40 @@ on:
       - "backend/**"
       - ".github/workflows/backend.yml"
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
-
     defaults:
       run:
         working-directory: backend
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
           cache-dependency-path: backend/requirements.txt
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-
-      - name: Run tests
+      - name: Capture reproducibility metadata
         run: |
-          python -m pytest -q
+          mkdir -p evidence
+          printf 'repository=%s\ncommit=%s\nrun_id=%s\nrunner=%s\n' "$GITHUB_REPOSITORY" "$GITHUB_SHA" "$GITHUB_RUN_ID" "$RUNNER_OS" > evidence/metadata.txt
+          python --version >> evidence/metadata.txt 2>&1
+      - name: Run API contract tests
+        run: |
+          set -o pipefail
+          python -m pytest -q 2>&1 | tee evidence/pytest.log
+      - name: Upload boardless API evidence (not RF field proof)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sitelink-boardless-${{ github.run_id }}
+          path: backend/evidence/
+          if-no-files-found: error
+          retention-days: 7
