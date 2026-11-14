@@ -1,0 +1,67 @@
+name: SPATIALINK Validation
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [docs/rebrand-spatialink]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run backend tests
+        run: python -m pytest -q
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Typecheck and production build
+        run: npm run build
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate SPATIALINK documentation links and boundaries
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          readme = Path("README.md").read_text(encoding="utf-8-sig")
+          expected = [
+              "spatial-analysis.md", "architecture.md", "validation-plan.md",
+              "design-direction.md", "roadmap.md", "project-origins.md"
+          ]
+          assert "# SPATIALINK" in readme
+          assert "simulation" in readme.lower()
+          for name in expected:
+              assert Path("docs", name).is_file(), name
+              assert f"docs/{name}" in readme, name
+          print("SPATIALINK documentation validation passed")
+          PY
