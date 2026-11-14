@@ -1,187 +1,81 @@
+# SPATIALINK — System Architecture
 
-SiteLink Scout Architecture
-1. Purpose
+**Engineering:** 이영준 · **Spatial/UX Direction:** 박하음
 
-SiteLink Scout provides real-world wireless measurements for the SiteLink platform.
+## Implemented system
 
-The system separates two responsibilities:
+```text
+ESP32 (2.4 GHz, C++/Arduino/PlatformIO) or boardless simulator
+   → HTTP/JSON → FastAPI/Pydantic/SQLAlchemy → SQLite
+   → React/TypeScript/Vite field console
+```
 
-SiteLink Planner
+The original SiteLink Planner AP optimization algorithm is a separate conceptual planning layer, **not** an implemented component of this Scout repository. Runtime service names remain SiteLink Scout until code is separately rebranded.
 
-Responsible for:
+## Existing measurement contract
 
-construction-space analysis
-AP candidate placement
-expected coverage estimation
-priority-zone analysis
-SiteLink Scout
+```json
+{"device_id":"SCOUT-01","zone_id":"ZONE-B03","ssid":"SiteLink_AP_01","bssid":"AA:BB:CC:DD:EE:FF","rssi":-64,"channel":6}
+```
 
-Responsible for:
+The server sets `received_at`.
 
-real Wi-Fi measurement
-RSSI collection
-zone telemetry
-planned vs measured comparison
-dead-zone verification
+| Method | Endpoint |
+|---|---|
+| GET | /api/v1/health |
+| POST | /api/v1/measurements |
+| GET | /api/v1/measurements |
+| GET | /api/v1/devices |
+| GET | /api/v1/devices/{device_id} |
+| GET | /api/v1/coverage |
 
-The Scout is therefore a measurement and validation layer, not the AP optimization algorithm itself.
+Historical design proposals also mentioned `GET /api/v1/devices/{device_id}/measurements` and `GET /api/v1/zones`; verify router implementations before treating them as available. The running `/docs` OpenAPI page is authoritative.
 
-2. End-to-End Flow
-CAD / BIM / Construction Phase
-            ↓
-      SiteLink Planner
-            ↓
-     AP Candidate Position
-            ↓
-       AP Installation
-            ↓
-    SiteLink Scout Nodes
-            ↓
-     RSSI Measurements
-            ↓
-       FastAPI Server
-            ↓
-        Measurement DB
-            ↓
-    Coverage Aggregation
-            ↓
-   SiteLink Field Console
-            ↓
-   Relocation Recommendation
-3. Device Layer
-Hardware
+## RSSI and coverage
 
-Initial MVP:
+| RSSI dBm | Class |
+|---|---|
+| ≥ -55 | EXCELLENT |
+| -65…-56 | GOOD |
+| -75…-66 | FAIR |
+| -85…-76 | POOR |
+| ≤ -86 | DEAD |
 
-ESP32 DevKit V1
-SSD1306 OLED
-RGB LED or WS2812
-USB power supply / power bank
-Responsibilities
+`usable = RSSI >= -75 dBm`. Coverage counts latest usable samples among zones that have samples. `dead_zones` are a subset of uncovered zones. **No continuous spatial coverage or calibrated heatmap is implemented.**
 
-Each Scout:
+## Local run
 
-scans nearby Wi-Fi networks
-locates a configured target SSID/BSSID
-obtains RSSI
-classifies current signal level
-displays the result locally
-transmits the measurement to the server
+Prepare Python environment at `backend/.venv` with the repository backend dependencies and install npm dependencies in `frontend/`. Requires a Unix-like shell, curl, lsof, Python and Node/npm.
 
-Example:
+```bash
+./scripts/start-demo.sh
+./scripts/simulate-demo.sh
+./scripts/check-demo.sh
+./scripts/stop-demo.sh
+```
 
-SCOUT-01
-ZONE-B03
-AP: SiteLink_AP_01
-RSSI: -64 dBm
-STATUS: GOOD
-4. Communication
-MVP Protocol
-HTTP REST + JSON
+The start script uses backend port 8000 and frontend port 5173. The simulator sends synthetic samples in dynamic mode (10 cycles, 2-second interval). This verifies software integration, not real RF performance.
 
-Reasons:
+## Firmware
 
-simple implementation
-simple debugging
-easy demonstration
-native FastAPI compatibility
-sufficient for low-rate prototype telemetry
+```bash
+cd firmware
+cp include/config.example.h include/config.h
+python3 -m platformio run
+cd ..
+./scripts/detect_port.sh
+./scripts/upload.sh
+./scripts/monitor.sh
+```
 
-MQTT may be evaluated after the MVP.
+Configure device/zone ID, target SSID/BSSID, Wi-Fi credentials and API_URL in the local config. Use the backend computer's LAN IP, not `127.0.0.1` from ESP32. Never commit credentials. OLED, RGB LED and enclosure are historical hardware concepts; physical upload and end-to-end testing remain to be evidenced.
 
-5. Backend Layer
+## Planned spatial layer (not implemented)
 
-Technology:
+Entities: FloorPlan, SpatialFeature, MeasurementPoint, Scenario, OccupancyObservation, AttenuationEstimate. Proposed endpoints: `POST /api/v1/floorplans`, `POST /api/v1/measurement-points`, `GET /api/v1/scenarios`. Each measurement should link floor coordinates, plan scale, scenario, source (`physical|synthetic|estimated`), timestamp and BSSID.
 
-FastAPI
-Pydantic
-SQLAlchemy
-SQLite
+Privacy: avoid exposing private SSIDs/BSSIDs or identifiable occupancy records. Restrict measurement ingestion in deployments.
 
-Primary API:
+## Original design considerations
 
-POST /api/v1/measurements
-GET  /api/v1/devices
-GET  /api/v1/devices/{device_id}
-GET  /api/v1/devices/{device_id}/measurements
-GET  /api/v1/zones
-GET  /api/v1/coverage
-GET  /api/v1/health
-6. Measurement Entity
-
-Core attributes:
-
-id
-device_id
-zone_id
-ssid
-bssid
-rssi
-channel
-received_at
-
-received_at is generated by the backend.
-
-7. Signal Classification
-
-Prototype classification:
-
->= -55       EXCELLENT
--56 ~ -65    GOOD
--66 ~ -75    FAIR
--76 ~ -85    POOR
-<= -86       DEAD
-
-For MVP coverage calculations:
-
-usable = RSSI >= -75 dBm
-
-Example:
-
-16 usable cells
-20 total cells
-
-Coverage = 16 / 20 × 100
-         = 80%
-8. Frontend Layer
-
-The SiteLink Field Console provides:
-
-total coverage
-average RSSI
-active Scout count
-dead-zone count
-Scout cards
-zone heatmap
-RSSI history
-relocation recommendations
-
-MVP update strategy:
-
-HTTP polling every 2 seconds
-
-WebSockets are intentionally deferred until required.
-
-9. MVP Design Principle
-
-The prototype prioritizes:
-
-Measurement reliability
-        >
-End-to-end integration
-        >
-Demonstrability
-        >
-Architectural complexity
-
-Technologies intentionally excluded from the initial prototype:
-
-Kafka
-Kubernetes
-Redis
-Grafana
-InfluxDB
-WebSocket infrastructure
-ML-based optimization
-
-They may be introduced only when justified by later requirements.
+The initial design favored low-rate HTTP/JSON telemetry and simple polling over MQTT/WebSockets. Kafka, Kubernetes, Redis, Grafana, InfluxDB and ML-based optimization were intentionally excluded from the MVP. See [Project Origins](project-origins.md).
