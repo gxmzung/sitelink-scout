@@ -1,22 +1,30 @@
-# SPATIALINK Roadmap
+# SPATIALINK 개발 로드맵
 
-Stages are proposed; none implies unverified functionality is complete.
+**1차 실증 후보는 배재대학교 캠퍼스입니다.** 특정 건물 선정·측정 승인·실측은 미완료입니다. 아래 단계는 계획이며 근거 없이 완료로 표기하지 않습니다.
 
-| Stage | Scope | Exit evidence |
+| 단계 | 개발·연구 범위 | 완료 근거 |
 |---|---|---|
-| 0. Foundation | Documentation, existing E2E and API audit | reproducible checks and preserved history |
-| 1. Spatial mapping | floor-plan scale, origin, measurement x/y and provenance | observed points on a correctly scaled plan |
-| 2. Architecture-led UX | layers, inspector, scenario comparison | working interface and design rationale |
-| 3. Controlled RF study | partitions, concrete, materials, occupancy | raw paired experiments and uncertainty |
-| 4. Model evaluation | calibrated coefficients, held-out comparison | baseline, MAE/RMSE and limitations |
-| 5. Advanced integrations | CAD/BIM and other wireless technologies | independently scoped validation |
+| 0. 기반 구축 | 문서·API 확인·가상 데이터 E2E | CI 통과 및 원본 기여 기록 보존 |
+| 1. 캠퍼스 실증 준비 | 공간·네트워크 담당자 협의, 도면 이용 허가, 안전·개인정보 검토 | 승인 범위 및 현장 후보 기록 |
+| 2. 평면도 좌표 연동 | 축척·원점·층·측정점 x/y 및 데이터 출처 | 실제 도면 위 정확한 관측점 배치 |
+| 3. 건축 중심 UI | 레이어·측정점 상세정보·조건 비교 | 작동 화면과 검토 기록 |
+| 4. RF 반복 실험 | 벽체·칸막이·자재·점유 조건 | 원시 측정값과 변동성 보고 |
+| 5. 모델 검증 | 보정 및 별도 검증 지점 비교 | 기준 모델 대비 MAE/RMSE |
+| 6. 확장 | CAD/BIM 연동 및 타 무선 기술 | 별도 범위·실증 근거 |
 
-## Ownership
+## 역할
 
-박하음: architectural scenarios, spatial analysis and UX/design direction.  
-이영준: firmware, API, data pipeline, frontend implementation and automation.  
-Both: experiment design, data interpretation and evidence review.
+- **박하음(검토 예정):** 건축 시나리오·도면 해석·측정점 계획·UI/UX 방향
+- **이영준:** 펌웨어·API·DB·프론트엔드 구현·자동화
+- **공동 검토:** 실험 조건, 측정값 해석, 산출물의 근거 수준
 
-## Priority
+AI가 만든 공간 UI 시안은 박하음의 작성·승인으로 간주하지 않습니다.
 
-**Spatial coordinates and provenance precede heatmap interpolation.** Avoid arbitrary deadlines and unvalidated accuracy targets. Only label a milestone complete when code, tests or research artifacts demonstrate it.
+## 우선순위
+
+1. 배재대학교에서 **실제로 허가 가능한 공간**을 먼저 확인
+2. 평면도 좌표와 출처를 데이터 구조에 연결
+3. 실제 측정점 지도와 가상 시뮬레이션을 분리
+4. 실측 자료가 확보된 뒤 보간·예측 모델 개발
+
+**도면 좌표 및 데이터 출처 확보가 히트맵 구현보다 우선입니다.**
