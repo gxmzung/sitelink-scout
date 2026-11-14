@@ -1,124 +1,94 @@
-# SPATIALINK — Architecture-led UX Design Handoff
+# SPATIALINK 건축 중심 UI/UX 설계 및 인계 문서
 
-> **Status: AI-prepared concept for 박하음 review, not approved or authored by 박하음.**  
-> 박하음의 예정 역할: 건축 공간 해석·실험 시나리오·UI/UX 디렉팅. 이영준의 예정 역할: 데이터 모델·백엔드·프론트엔드 구현.  
-> **Evidence rule:** 이 문서/시안은 완성된 건축 현장조사나 실제 사용자 테스트의 증거가 아니다.
+> **상태:** AI가 작성한 개념 설계 초안. 박하음이 작성하거나 승인한 문서가 아닙니다.  
+> **현장 후보:** 배재대학교 캠퍼스. 실제 건물·층·도면·측정점은 미확정입니다.  
+> **예정 역할:** 박하음 — 건축 공간·측정 시나리오·UI/UX 검토 / 이영준 — 데이터 모델·프론트엔드 구현.
 
-## Working concept
+## 1. 핵심 방향
 
-![SPATIALINK experimental architectural workspace concept](spatialink-workspace-concept.svg)
+**Where Space Shapes Signal.** 건축 평면도가 중심 작업 공간이며, Wi-Fi 측정값은 출처를 가진 개별 점으로 표시합니다. 데이터가 없는데 그라데이션 히트맵을 그려 실측처럼 보이게 하지 않습니다.
 
-[Open editable SVG concept](spatialink-workspace-concept.svg)
+![건축 공간 중심 워크스페이스 가상 시안](spatialink-workspace-concept.svg)
 
-**Where Space Shapes Signal.** Building geometry is the workspace, not a background decoration. A discrete RSSI observation is a marker with provenance, never a filled heatmap by default.
+[SVG 시안 열기](spatialink-workspace-concept.svg)
 
-### Design goals
+**주의:** 시안 속 12m × 8m 평면·방 구조·RSSI 숫자는 전부 **가상 예시**입니다. 배재대학교의 실제 도면이 아니며 현재 구현된 웹 화면도 아닙니다.
 
-1. Locate each sample in **metres on a versioned, scaled floor plan**.
-2. Distinguish **MEASURED / SYNTHETIC / ESTIMATED / MISSING** in every relevant visual and export.
-3. Allow comparison of one changing spatial variable with the **same AP, device position and measurement protocol**.
-4. Show a user *why* a value is associated with an architectural feature without claiming causality.
-5. Keep clear separation between existing Scout zone telemetry and future coordinate-linked datasets.
+## 2. 화면 구성
 
-## Information architecture
+### 화면 A — 공간 워크스페이스
 
-```text
-Project
- └── Floor (revision, dimensions, drawing source, x/y origin)
-      ├── Scenarios (S01 baseline; S02 partition; S03 wall; S04 occupancy)
-      ├── Layers (geometry, wall types, observed samples, estimated layer OFF)
-      ├── Point inspector (position, provenance, RSSI, BSSID, time, sample count)
-      └── Comparison (baseline vs alternate, uncertainty and notes)
-```
+- **왼쪽:** 프로젝트, 건물·층, 시나리오, 벽체·측정점·추정 레이어 선택
+- **중앙:** 축척 있는 평면도, 북쪽 방향, 원점, 벽·문·AP 위치, 관측점
+- **오른쪽:** 선택 지점의 좌표·RSSI·BSSID·측정 시각·출처·자료 누락 여부
+- **아래:** 기준조건과 변경조건 비교, 불확실성 및 검증 상태
 
-### Screen A — Spatial Workspace (concept image above)
+관측점 클릭 시 상세정보를 보여주고, 추정 레이어는 검증 데이터가 준비되기 전 비활성화합니다. **현재 구현된 기능이 아니라 구현 명세입니다.**
 
-- **Left sidebar:** select floor and phase/scenario; toggles for wall/material geometry and samples; estimated field disabled until calibrated.
-- **Canvas:** SVG floor plan with north arrow, metre scale bar, origin, revision, door/opening geometry, AP position and individual measurements.
-- **Right inspector:** point coordinates, measured/estimated/synthetic tag, raw source, timestamps and device identifiers. Missing values display “Not recorded”, never zero.
-- **Bottom:** paired scenario comparison and evidence completeness warnings.
-
-**Prototype interaction:** clicking a point updates the inspector; selecting a scenario changes the annotation set; disabled heatmap has a tooltip explaining required georeferenced evidence. These are **design specifications, not implemented behaviors**.
-
-### Screen B — Scenario Compare (wireframe specification)
+### 화면 B — 조건 비교
 
 ```text
-┌──────────────────────┬───────────────────────┐
-│ S01 OPEN BASELINE    │ S02 PARTITION CHANGE  │
-│ plan + observed dots │ same plan + dots      │
-│ fixed AP & receiver  │ added wall annotation │
-├──────────────────────┴───────────────────────┤
-│ P01: baseline median  | alternate median     │
-│ ΔRSSI (dB), sample counts, dates, IQR        │
-│ [Confounders] [Protocol] [Export CSV]        │
-└──────────────────────────────────────────────┘
+┌────────────────────┬─────────────────────┐
+│ S01 개방 기준조건  │ S02 칸막이 변경조건 │
+│ 평면도 + 관측점    │ 동일 평면도 + 관측점│
+├────────────────────┴─────────────────────┤
+│ 지점별 RSSI 중앙값 / 변화량(dB)          │
+│ 표본 수 · 측정 일시 · IQR · 교란요인     │
+│ [측정 프로토콜] [CSV 내보내기]           │
+└──────────────────────────────────────────┘
 ```
 
-Never compare two conditions as a causal material effect if the AP/channel/device position changed. With no physical readings, all numerical labels must say “SYNTHETIC EXAMPLE”.
+AP·채널·장치 위치가 바뀐 두 조건을 단일 자재의 감쇠 효과로 비교하지 않습니다.
 
-### Screen C — Measurement Session (wireframe specification)
+### 화면 C — 측정 세션
 
 ```text
-Floor / Drawing version / BSSID / Channel / AP height
-Point ID / x,y,z (m) / scenario / material / people count
-Source: [Physical ESP32] [Synthetic simulator] [Manual import]
-Session start -> quality checks -> save raw samples -> summary
+건물 / 층 / 도면 버전 / BSSID / 채널 / AP 높이
+측정점 ID / x,y,z(m) / 시나리오 / 벽체 재료 / 인원
+출처: [실물 ESP32] [가상 시뮬레이터] [수동 입력]
+측정 시작 → 품질 확인 → 원시값 저장 → 통계 요약
 ```
 
-Incomplete coordinates and missing plan scale block *spatial analysis*, but not the existing zone-based backend ingestion. Do not present the future editor as currently available.
+축척과 좌표가 없으면 **공간 분석 기능만 제한**하고 기존 구역 단위 데이터 수신은 유지합니다.
 
-### Screen D — Data Provenance & Export
+### 화면 D — 출처 확인 및 내보내기
 
-Export one record per observation with a transparent provenance key and draw revision. A model prediction adds `model_id`, `version`, `method` and uncertainty fields; interpolation must not overwrite physical observations.
+관측값마다 출처, 도면 버전, 장치·시각 정보를 내보냅니다. 추정값에는 모델 ID·버전·방법·불확실성을 별도로 기록하며 실측값을 덮어쓰지 않습니다.
 
-## Design system and implementation contract
+## 3. 시각화 원칙
 
-| Design token | Concept usage | Developer acceptance |
-|---|---|---|
-| Deep navy `#0c1422` | chrome/background | tokenized CSS, not hard-coded per component |
-| Surface `#172638` | panels | AA contrast testing prior to release |
-| Mint `#70e0c4` | selected measurement marker | always paired with label/icon |
-| Amber `#f2ca83` | caution/synthetic sample | explicit text “SYNTHETIC” |
-| Coral `#f28f8f` | weak sample / warning | not an error severity on its own |
-| 8 px grid | spacing | retain responsive equivalents |
-| Data legend | measured / estimated / synthetic | visible by keyboard and screen reader |
+| 항목 | 설계 기준 |
+|---|---|
+| 배경 | 짙은 남색 `#0c1422` |
+| 패널 | `#172638` |
+| 측정점 강조 | 민트 `#70e0c4`, 문자·아이콘 병기 |
+| 가상 데이터 | 호박색 `#f2ca83`, 반드시 **가상 데이터** 표기 |
+| 약한 신호 | 산호색 `#f28f8f`, 색상 외 등급 병기 |
+| 간격 | 기본 8px 단위 |
+| 접근성 | 키보드 조작·대비·스크린리더 설명 |
+| 반응형 | 넓은 화면 3열, 중간 화면 접이식 상세정보, 모바일 서랍형 패널 |
 
-**Do not rely on color alone.** An observed marker must have a point ID, dBm label or accessible description. Estimated regions use a different fill pattern and a method/uncertainty caption. Empty states distinguish “not sampled” from “no signal”.
+**실측 / 가상 / 추정 / 미수집**은 색상만으로 구분하지 않습니다. 측정되지 않은 구역은 '신호 없음'이 아닌 '미측정'으로 표시합니다.
 
-Responsive: ≥1200 px three-column spatial workspace; 768–1199 px inspector collapsible; below 768 px layer/inspector drawers and pan/zoom canvas. Prefer SVG scalable geometry for prototype; future CAD/BIM import is explicitly out of scope.
+## 4. 배재대학교 파일럿 공간 설정
 
-## Architectural pilot: conceptual floor, not an actual surveyed plan
+- 실제 공간 선정 전에는 가상의 **12m × 8m 평면**을 UI 개발용으로만 사용합니다.
+- 시안의 P1·P2·P3 및 -62·-74·-82 dBm은 임의로 만든 값입니다.
+- 실제 도면을 확보하면 사용 권한, 축척, 북쪽 방향, 원점, 벽체 재료, 버전을 기록합니다.
+- 수업·이용자 동선·네트워크 정책을 침해하지 않는 측정점만 제안합니다.
 
-- **Synthetic dimensions:** 12 m × 8 m, southwest coordinate origin (0,0), north up; 40 SVG px/m in the drawing.
-- **Illustrative positions:** P1 (~2.05,4.95 m), P2 (~4.48,1.45 m), P3 (~9.90,5.55 m).
-- **Synthetic labels only:** −62, −74, −82 dBm. **These are UI placeholders and not experiments, claims of RF strength, or material coefficients.**
-- **Building geometry:** schematic rooms/doors, not building code-compliant drawings.
-- **Follow-up:** replace with permissioned floor plan, measured dimensions, revision identifier and field photos only after review.
+## 5. 건축 검토 체크리스트
 
-### Spatial pilot acceptance (architectural review gate)
+| 검토 내용 | 현재 상태 |
+|---|---|
+| 연구 질문·변수 정리 | 초안 작성 |
+| 가상 평면도 UI 구성 | 초안 작성, 미승인 |
+| 배재대학교 실제 건물 선정 | 미완료 |
+| 도면 사용 및 측정 허가 | 미완료 |
+| 축척·방향·재료 현장 확인 | 미완료 |
+| 안전한 측정점 배치 | 미완료 |
+| 박하음의 디자인 검토·승인 | 미완료 |
 
-| Check | Current status | Evidence required |
-|---|---|---|
-| Research question and variables defined | Drafted | `docs/spatial-analysis.md` |
-| Conceptual UI composition | Drafted; unapproved | `docs/spatialink-workspace-concept.svg` |
-| Real building/floor selected | Not started | permitted room/floor identifier |
-| Scale and north orientation surveyed | Not started | measured floor-plan metadata |
-| Material taxonomy verified in situ | Not started | annotated material schedule |
-| Controlled measurement point locations | Not started | accessible, safe, repeated point layout |
-| 박하음's design sign-off | Pending | dated feedback or reviewed revision |
+박하음은 건축 표기, 공간 시나리오의 현실성, 측정점 배치, 재료 분류, UI의 실측·추정 구분을 검토하면 됩니다. 검토 의견은 날짜가 남는 PR 댓글 또는 수정 문서로 기록합니다.
 
-## Reviewer handoff for 박하음
-
-Please review **before attributing completed design work**:
-
-1. Whether room/wall/door symbols and annotation hierarchy make sense for architectural practice.
-2. Whether the spatial scenarios correspond to realistically controllable building conditions.
-3. Whether scale/coordinates and material taxonomy adequately support an on-site measurement plan.
-4. Whether the UI helps distinguish observation from prediction at a glance.
-5. Which real building can be surveyed safely and with permission.
-
-Record feedback in a PR comment or signed-off revision. **No one has approved this concept on 박하음's behalf.**
-
-## Portfolio evidence
-
-Retain the research question, architectural scenarios, a versioned floor plan, wireframes, design decisions and actual feedback. Use dated authorship records. Treat this AI-prepared exploratory concept as supporting material, not evidence of a third party's personal design contribution.
+**작성자 표기 원칙:** AI가 만든 시안을 박하음의 개인 포트폴리오 작업물로 귀속하지 않습니다. 실제 기여는 이후 검토·수정·현장조사 등 확인 가능한 산출물에 근거해 기록합니다.
