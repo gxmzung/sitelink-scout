@@ -39,3 +39,6 @@ python -m pytest -q tests/test_api_contract_regression.py
 
 ## 의존성 고정 단계
 `backend/requirements-ci.txt`에는 이전에 성공한 Ubuntu/Python 3.11 CI에서 관측한 직접 패키지 버전을 고정했습니다. 일반 개발용 `backend/requirements.txt`는 유연한 의존성 목록이며, CI에 쓰는 별도 목록과 다릅니다. 간접 패키지까지 고정하지는 않았으므로 완전한 lockfile이 아니며, 정확한 설치 집합은 GitHub Actions 아티팩트의 `dependencies.txt`에서 확인해야 합니다.
+
+## CI 데이터베이스 격리
+GitHub Actions 백엔드 테스트는 `SITELINK_DATABASE_URL` 환경변수를 사용해 runner 임시 디렉터리에 별도 SQLite 파일을 생성합니다. 저장소에 포함된 `sitelink.db` 또는 실제 계측 DB에 쓰지 않으며 CI 실행 단위로 파일명을 구분합니다. 일반 로컬 테스트는 환경변수를 지정하지 않으면 여전히 기본 `sqlite:///./sitelink.db`를 사용하므로, 로컬에서도 테스트용 DB URL을 별도로 지정해야 합니다.
