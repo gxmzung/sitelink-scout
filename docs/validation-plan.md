@@ -1,37 +1,47 @@
-# Validation Plan
+# 검증 및 현장 실증 계획
 
-**Spatial protocol:** 박하음 · **Measurement engineering:** 이영준
+**현장 후보:** 배재대학교 캠퍼스 · 공간 이용 및 네트워크 측정 허가 전에는 현장 실험 미착수
 
-## Evidence levels
+## 1. 검증 단계
 
-| Level | Goal | Evidence | Limit |
+| 단계 | 목표 | 필요한 근거 | 검증 범위 |
 |---|---|---|---|
-| V0 | Boardless E2E | tests, API, logs, UI | synthetic samples |
-| V1 | Physical ESP32 | real scan, BSSID/channel, POST | not RF calibration |
-| V2 | Spatial comparisons | repeated paired RSSI and drawings | confounders remain |
-| V3 | Model accuracy | held-out physical measurements | scenario-limited |
+| V0 | 보드 없는 소프트웨어 E2E | API·DB·Vite 실제 기동 및 가상 데이터 전송 로그 | 실제 무선 신호 검증 아님 |
+| V1 | ESP32 실물 연동 | 장치 스캔·BSSID·채널·POST·서버 수신 | RF 감쇠 모델 검증 아님 |
+| V2 | 건축 공간별 비교 | 축척 도면, 고정 위치, 반복 측정 원시 데이터 | 교란요인 잔존 |
+| V3 | 예측 정확도 평가 | 별도 검증 지점, 기준 모델과 MAE/RMSE | 해당 공간·조건에 한정 |
 
-## Controlled pilot
+**현재 V0:** GitHub Actions Ubuntu 러너에서 FastAPI + 격리된 SQLite + Vite를 실제 기동하고 가상 데이터를 POST해 커버리지·장치 조회를 확인했습니다. 브라우저 렌더링, 사용자 PC 로컬 실행, ESP32 실물 검증은 미완료입니다.
 
-1. Select a scaled floor plan, record AP/receiver x/y and heights.
-2. Fix AP model, BSSID, channel, power, antenna orientation and device position.
-3. Record baseline geometry, materials, thickness and occupancy.
-4. Compare open space, partitions, concrete barriers, material arrangements and occupancy scenarios separately.
-5. Initially collect 30 readings per point/condition across multiple independent sessions; **30 is a pilot choice, not a statistically justified sample size**.
-6. Save raw observations, timestamps, source type, configuration and floor-plan version.
-7. Compare median RSSI, IQR, standard deviation and run-to-run variability.
-8. Evaluate any prediction with MAE/RMSE (dB) on held-out physical points against a baseline.
+## 2. 배재대학교 실증 사전 조건
 
-Define numerical accuracy targets after pilot variability is measured; report uncertainty and confounders.
+1. 시설·공간 담당자에게 측정 가능 장소, 이용 시간, 도면·사진 사용 범위 확인
+2. 교내 네트워크 관리자에게 Wi-Fi 관측·BSSID 기록 및 연구 목적 데이터 보관 정책 확인
+3. 수업·통행·안전 방해가 없는 지점과 시간 선정
+4. 실제 도면의 축척·원점·버전과 AP·수신기 위치·높이 기록
+5. 개인을 식별할 수 있는 점유 정보·사진·기기 식별정보 수집 금지 또는 적절한 승인·비식별화
 
-## Acceptance
+허가되지 않은 구역이나 네트워크에 대해 현장 실증을 수행하지 않습니다.
 
-V0 requires reproducible API and E2E passes. V1 requires physical device-to-console data flow. V2 requires repeatable, documented paired experiments. V3 requires predeclared held-out evaluation. Simulated values cannot establish real-world material attenuation.
+## 3. 반복 측정 프로토콜
 
-## Historical boundary
+1. 동일 AP 모델, BSSID, 채널, 송신 출력, 장치·안테나 방향 유지
+2. 기준조건의 벽체·개구부·자재·점유 상태 기록
+3. 개방/칸막이/벽체/자재/점유 시나리오를 가능한 한 하나씩 비교
+4. 지점·조건당 **초기 30회**를 여러 독립 세션에 나누어 수집. 30회는 탐색용 제안이지 통계적으로 확정된 표본 수가 아님
+5. 원시값·시각·출처·도면 버전·장치 설정을 보존
+6. 중앙값, IQR, 표준편차, 세션 간 변동성 보고
+7. 별도 검증 지점에서 기준 모델 대비 MAE/RMSE(dB) 평가
 
-The LH proposal-stage simulation tested 454 AP candidates, one ~6.3 m relocation and 76.0% → 79.1% priority-zone **predicted** coverage (+3.1 percentage points). These are not physical measurements.
+파일 보관 항목: 원시 CSV/JSON, 도면 버전, 허용된 설치 사진, 장치 설정, 코드 커밋, 실험 시나리오, 분석 코드 및 한계.
 
-## Evidence archive
+## 4. 완료 기준
 
-Preserve raw CSV/JSON, floor-plan version, setup photos where consented, device settings, software commit, analysis scripts, scenario manifest, figures and limitations. Do not collect personally identifying occupancy records.
+- **V0:** 재현 가능한 API·DB·프론트엔드 HTTP E2E 성공
+- **V1:** 실물 ESP32 → 서버 → 콘솔 데이터 흐름 확인
+- **V2:** 공간 조건별 반복 실측과 통제 변수 기록
+- **V3:** 사전 정의한 평가 지점에서 모델 정확도와 불확실성 보고
+
+## 5. 과거 LH 시뮬레이션과 구분
+
+기존 SiteLink의 AP 후보 454개, 약 6.3m 재배치, 우선구역 예측 커버리지 76.0%→79.1%(+3.1%p)는 **제안 단계 시뮬레이션**이며 배재대학교 실측 결과가 아닙니다.
